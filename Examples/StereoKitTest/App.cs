@@ -1,4 +1,4 @@
-﻿using StereoKit;
+using StereoKit;
 using StereoKit.Framework;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,8 @@ class App
 		logFilter         = LogLevel.Diagnostic};
 
 	public SKSettings Settings => settings;
-	public static PassthroughFBExt passthrough;
+	public static PassthroughFBExt   passthrough;
+	public static SpatialEntityFBExt fbSpatialEntity;
 
 	Model  floorMesh;
 	Matrix floorTr;
@@ -51,7 +52,8 @@ class App
 		Log.Subscribe(OnLog);
 		/// :End:
 		
-		passthrough = SK.AddStepper<PassthroughFBExt>();
+		passthrough     = SK.AddStepper<PassthroughFBExt>();
+		fbSpatialEntity = SK.AddStepper<SpatialEntityFBExt>();
 	}
 
 	//////////////////////

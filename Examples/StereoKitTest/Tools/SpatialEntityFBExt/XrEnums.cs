@@ -30,7 +30,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	enum XrStructureType : UInt32
 	{
 		XR_TYPE_EVENT_DATA_BUFFER = 16,
-
+		XR_TYPE_EVENT_DATA_SESSION_STATE_CHANGED = 18,
 		XR_TYPE_SPACE_LOCATION = 42,
 
 		// XR_FB_spatial_entity

@@ -26,17 +26,17 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	}
 
 	// XR_EXT_uuid
-	[StructLayout(LayoutKind.Sequential)]
-	struct XrUuidEXT
-	{
-		// TODO not sure if this is correct
-		public byte[] data;
+	//[StructLayout(LayoutKind.Sequential)]
+	//struct XrUuidEXT
+	//{
+	//	// TODO not sure if this is correct
+	//	public byte[] data;
 
-		public XrUuidEXT()
-		{
-			data = new byte[16];
-		}
-	}
+	//	public XrUuidEXT()
+	//	{
+	//		data = new byte[16];
+	//	}
+	//}
 
 
 	#region XR_FB_spatial_entity
@@ -89,20 +89,9 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	struct XrSpaceComponentStatusSetInfoFB
 	{
 		private XrStructureType type;
-
 		public IntPtr next;
-
-		/// <summary>
-		/// the component whose status is to be set
-		/// </summary>
 		public XrSpaceComponentTypeFB componentType;
-
 		public bool enabled;
-
-		/// <summary>
-		/// the number of nanoseconds before the operation should be cancelled. A value of XR_INFINITE_DURATION 
-		/// indicates to never time out.
-		/// </summary>
 		public XrDuration timeout;
 
 		public XrSpaceComponentStatusSetInfoFB(XrSpaceComponentTypeFB componentType, bool enabled)
@@ -182,7 +171,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		public XrAsyncRequestIdFB requestId;
 		public XrResult result;
 		public XrSpace space;
-		public XrUuidEXT uuid;
+		public Guid uuid;
 		public XrSpaceComponentTypeFB componentType;
 
 		/// <summary>
@@ -197,7 +186,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			requestId = 0;
 			result = 0;
 			space = 0;
-			uuid = new XrUuidEXT();
+			uuid = Guid.Empty;
 			componentType = 0;
 			enabled = false;
 		}

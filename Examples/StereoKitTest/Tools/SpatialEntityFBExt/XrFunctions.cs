@@ -3,6 +3,7 @@
 using XrSpace = System.UInt64;
 using XrTime = System.Int64;
 using XrAsyncRequestIdFB = System.UInt64;
+using System;
 
 namespace StereoKitTest.Tools.SpatialEntityFBExt
 {
@@ -28,7 +29,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	/// <returns></returns>
 	delegate XrResult del_xrGetSpaceUuidFB(
 		XrSpace space,
-		out XrUuidEXT uuid);
+		out Guid uuid);
 
 	/// <summary>
 	/// Lists any component types that an entity supports.
@@ -41,7 +42,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	delegate XrResult del_xrEnumerateSpaceSupportedComponentsFB(
 		XrSpace space,
 		uint componentTypeCapacityInput,
-		out uint componentTypeCountOutput,
+		out UInt32 componentTypeCountOutput,
 		XrSpaceComponentTypeFB[] componentTypes);           // TODO not sure if this is correct...
 
 

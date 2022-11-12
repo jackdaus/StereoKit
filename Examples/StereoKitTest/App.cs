@@ -87,6 +87,9 @@ class App
 		{
 			UI.EnableFarInteract = false;
 		}
+
+		// Test
+		fbSpatialEntity.CreateAnchor(Pose.Identity);
 	}
 
 	//////////////////////

@@ -1,5 +1,6 @@
 using StereoKit;
 using StereoKit.Framework;
+using StereoKitTest.Tools.SpatialEntityFBExt;
 using System;
 using System.Collections.Generic;
 

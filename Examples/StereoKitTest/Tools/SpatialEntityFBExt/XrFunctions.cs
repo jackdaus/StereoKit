@@ -1,9 +1,10 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
-using XrSpace = System.UInt64;
-using XrTime = System.Int64;
+using XrTime             = System.Int64;
+using XrSpace            = System.UInt64;
+using XrSession          = System.UInt64;
 using XrAsyncRequestIdFB = System.UInt64;
-using System;
 
 namespace StereoKitTest.Tools.SpatialEntityFBExt
 {
@@ -73,8 +74,37 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	#endregion
 
 
+	#region XR_FB_spatial_entity
+
+	/// <summary>
+	/// Persists the spatial entity at the specified location with the specified mode. 
+	/// </summary>
+	/// <param name="session">a handle to an XrSession.</param>
+	/// <param name="info">contains the parameters for the save operation.</param>
+	/// <param name="requestId">an output parameter, and the variable it points to will be populated with the ID of this asynchronous request.</param>
+	/// <returns></returns>
+	delegate XrResult del_xrSaveSpaceFB(
+		XrSession session,
+		[In] XrSpaceSaveInfoFB info,
+		out XrAsyncRequestIdFB requestId);
+
+	/// <summary>
+	/// Erases a spatial entity from storage at the specified location. 
+	/// </summary>
+	/// <param name="session">a handle to an XrSession.</param>
+	/// <param name="info">contains the parameters for the erase operation.</param>
+	/// <param name="requestId">an output parameter, and the variable it points to will be populated with the ID of this asynchronous request.</param>
+	/// <returns></returns>
+	delegate XrResult del_xrEraseSpaceFB(
+		XrSession session,
+		[In] XrSpaceEraseInfoFB info,
+		out XrAsyncRequestIdFB requestId);
+
+	#endregion
+
+
 	#region Other XrFunctions
-	
+
 	delegate XrResult del_xrLocateSpace(
 		XrSpace space,
 		XrSpace baseSpace,

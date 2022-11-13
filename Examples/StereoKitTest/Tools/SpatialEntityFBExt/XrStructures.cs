@@ -2,9 +2,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using XrSpace = System.UInt64;
-using XrTime = System.Int64;
-using XrDuration = System.Int64;
+using XrTime             = System.Int64;
+using XrDuration         = System.Int64;
+using XrSpace            = System.UInt64;
 using XrAsyncRequestIdFB = System.UInt64;
 
 namespace StereoKitTest.Tools.SpatialEntityFBExt
@@ -146,18 +146,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		public XrResult result;
 		public XrSpace space;
 		public Guid uuid; // NOTE: not sure if this data is  Marshalled correctly... need to test
-						  //public XrUuidEXT uuid;
-
-		public XrEventDataSpatialAnchorCreateCompleteFB()
-		{
-			type = XrStructureType.XR_TYPE_EVENT_DATA_SPATIAL_ANCHOR_CREATE_COMPLETE_FB;
-			next = IntPtr.Zero;
-			requestId = 0;
-			result = 0;
-			space = 0;
-			uuid = Guid.Empty;
-			//uuid = new XrUuidEXT();
-		}
+		//public XrUuidEXT uuid;
 	}
 
 	/// <summary>
@@ -173,23 +162,88 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		public XrSpace space;
 		public Guid uuid;
 		public XrSpaceComponentTypeFB componentType;
-
-		/// <summary>
-		/// a boolean value indicating whether the component is now enabled or disabled.
-		/// </summary>
 		public bool enabled;
+	}
 
-		public XrEventDataSpaceSetStatusCompleteFB()
+	#endregion
+
+
+	#region XR_FB_spatial_entity_storage
+
+	/// <summary>
+	/// Contains information used to save the spatial entity.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceSaveInfoFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrSpace space;
+		public XrSpaceStorageLocationFB location;
+		public XrSpacePersistenceModeFB persistenceMode;
+
+		public XrSpaceSaveInfoFB(XrSpace space, XrSpaceStorageLocationFB location, XrSpacePersistenceModeFB persistenceMode)
 		{
-			type = XrStructureType.XR_TYPE_EVENT_DATA_SPACE_SET_STATUS_COMPLETE_FB;
+			type = XrStructureType.XR_TYPE_SPACE_SAVE_INFO_FB;
 			next = IntPtr.Zero;
-			requestId = 0;
-			result = 0;
-			space = 0;
-			uuid = Guid.Empty;
-			componentType = 0;
-			enabled = false;
+			this.space = space;
+			this.location = location;
+			this.persistenceMode = persistenceMode;
 		}
+	}
+
+	/// <summary>
+	/// Contains information used to erase the spatial entity.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceEraseInfoFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrSpace space;
+		public XrSpaceStorageLocationFB location;
+
+		public XrSpaceEraseInfoFB(XrSpace space, XrSpaceStorageLocationFB location)
+		{
+			type = XrStructureType.XR_TYPE_SPACE_ERASE_INFO_FB;
+			next = IntPtr.Zero;
+			this.space = space;
+			this.location = location;
+		}
+	}
+
+	/// <summary>
+	/// The save result event contains the success of the save/write operation to the specified location, 
+	/// as well as the XrSpace handle on which the save operation was attempted on, the unique UUID, and 
+	/// the triggered async request ID from the initial calling function.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrEventDataSpaceSaveCompleteFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrAsyncRequestIdFB requestId;
+		public XrResult result;
+		public XrSpace space;
+		public Guid uuid;
+		public XrSpaceStorageLocationFB location;
+	}
+
+	/// <summary>
+	/// The erase result event contains the success of the erase operation from the specified storage 
+	/// location. It also provides the UUID of the entity and the async request ID from the initial 
+	/// calling function.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrEventDataSpaceEraseCompleteFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrAsyncRequestIdFB requestId;
+		public XrResult result;
+		public XrSpace space;
+		public Guid uuid;
+		public XrSpaceStorageLocationFB location;
 	}
 
 	#endregion

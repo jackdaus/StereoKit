@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using StereoKit;
 using StereoKit.Framework;
 
-using XrSpace = System.UInt64;
-using XrSession = System.UInt64;
+using XrSpace            = System.UInt64;
+using XrSession          = System.UInt64;
 using XrAsyncRequestIdFB = System.UInt64;
 
 namespace StereoKitTest.Tools.SpatialEntityFBExt
@@ -22,7 +22,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			public Guid uuid;
 			public XrSpace xrSpace;
 			public Pose pose;
-			public XrSession requestId;
+			public XrAsyncRequestIdFB requestId;
 		}
 
 		public bool Available => extAvailable;
@@ -34,6 +34,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			if (SK.IsInitialized)
 				Log.Err("SpatialEntityFBExt must be constructed before StereoKit is initialized!");
 			Backend.OpenXR.RequestExt("XR_FB_spatial_entity");
+			Backend.OpenXR.RequestExt("XR_FB_spatial_entity_storage");
 		}
 
 		public bool Initialize()
@@ -41,6 +42,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			extAvailable =
 				Backend.XRType == BackendXRType.OpenXR &&
 				Backend.OpenXR.ExtEnabled("XR_FB_spatial_entity") &&
+				Backend.OpenXR.ExtEnabled("XR_FB_spatial_entity_storage") &&
 				LoadBindings();
 
 			// Set up xrPollEvent subscription
@@ -98,28 +100,34 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			return result == XrResult.Success;
 		}
 
-
-		// XR_FB_spatial_entity New Functions
-		del_xrCreateSpatialAnchorFB xrCreateSpatialAnchorFB;
-		del_xrGetSpaceUuidFB xrGetSpaceUuidFB;
+		// XR_FB_spatial_entity
+		del_xrCreateSpatialAnchorFB               xrCreateSpatialAnchorFB;
+		del_xrGetSpaceUuidFB                      xrGetSpaceUuidFB;
 		del_xrEnumerateSpaceSupportedComponentsFB xrEnumerateSpaceSupportedComponentsFB;
-		del_xrSetSpaceComponentStatusFB xrSetSpaceComponentStatusFB;
-		del_xrGetSpaceComponentStatusFB xrGetSpaceComponentStatusFB;
+		del_xrSetSpaceComponentStatusFB           xrSetSpaceComponentStatusFB;
+		del_xrGetSpaceComponentStatusFB           xrGetSpaceComponentStatusFB;
 
-		// Misc New Functions
+		// XR_FB_spatial_entity_storage
+		del_xrSaveSpaceFB  xrSaveSpaceFB;
+		del_xrEraseSpaceFB xrEraseSpaceFB;
+
+		// Misc
 		del_xrLocateSpace xrLocateSpace;
 
-		// XR_FB_spatial_entity
 		bool LoadBindings()
 		{
-			//XR_FB_spatial_entity
+			// XR_FB_spatial_entity
 			xrCreateSpatialAnchorFB = Backend.OpenXR.GetFunction<del_xrCreateSpatialAnchorFB>("xrCreateSpatialAnchorFB");
 			xrGetSpaceUuidFB = Backend.OpenXR.GetFunction<del_xrGetSpaceUuidFB>("xrGetSpaceUuidFB");
 			xrEnumerateSpaceSupportedComponentsFB = Backend.OpenXR.GetFunction<del_xrEnumerateSpaceSupportedComponentsFB>("xrEnumerateSpaceSupportedComponentsFB");
 			xrSetSpaceComponentStatusFB = Backend.OpenXR.GetFunction<del_xrSetSpaceComponentStatusFB>("xrSetSpaceComponentStatusFB");
 			xrGetSpaceComponentStatusFB = Backend.OpenXR.GetFunction<del_xrGetSpaceComponentStatusFB>("xrGetSpaceComponentStatusFB");
 
-			// Misc functions
+			// XR_FB_spatial_entity_storage
+			xrSaveSpaceFB = Backend.OpenXR.GetFunction<del_xrSaveSpaceFB>("xrSaveSpaceFB");
+			xrEraseSpaceFB = Backend.OpenXR.GetFunction<del_xrEraseSpaceFB>("xrEraseSpaceFB");
+
+			// Misc
 			xrLocateSpace = Backend.OpenXR.GetFunction<del_xrLocateSpace>("xrLocateSpace");
 
 			return xrCreateSpatialAnchorFB != null
@@ -183,6 +191,20 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 					}
 
 					break;
+				case XrStructureType.XR_TYPE_EVENT_DATA_SPACE_SAVE_COMPLETE_FB:
+					XrEventDataSpaceSaveCompleteFB saveComplete = Marshal.PtrToStructure<XrEventDataSpaceSaveCompleteFB>(XrEventDataBufferData);
+					if (saveComplete.result == XrResult.Success)
+					{
+						Log.Info("Save space sucessful!");
+					}
+					else
+					{
+						Log.Err($"Save space failed. Result: {saveComplete.result}");
+					}
+
+					break;
+				case XrStructureType.XR_TYPE_EVENT_DATA_SPACE_ERASE_COMPLETE_FB:
+					break;
 				default:
 					break;
 			}
@@ -210,6 +232,14 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		}
 
 		void saveSpace(XrSpace space)
+		{
+			XrSpaceSaveInfoFB saveInfo = new XrSpaceSaveInfoFB(space, XrSpaceStorageLocationFB.XR_SPACE_STORAGE_LOCATION_LOCAL_FB, XrSpacePersistenceModeFB.XR_SPACE_PERSISTENCE_MODE_INDEFINITE_FB);
+			XrResult result = xrSaveSpaceFB(Backend.OpenXR.Session, saveInfo, out XrAsyncRequestIdFB requestId);
+			if (result != XrResult.Success)
+				Log.Err($"Error saving spatial entity! Result: {result}");
+		}
+
+		void eraseSpace(XrSpace space)
 		{
 			// TODO
 		}

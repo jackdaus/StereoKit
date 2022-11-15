@@ -26,6 +26,14 @@ class DemoFBSpatialEntity : ITest
 				Pose fingerPose = Input.Hand(Handed.Right)[FingerId.Index, JointId.Tip].Pose;
 				App.fbSpatialEntity.CreateAnchor(fingerPose);
 			}
+			if (UI.Button("Load Anchors"))
+			{
+				App.fbSpatialEntity.LoadAnchors();
+			}
+			if (UI.Button("Erase All Anchors"))
+			{
+				App.fbSpatialEntity.EraseAnchors();
+			}
 		}
 
 		UI.WindowEnd();

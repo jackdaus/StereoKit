@@ -6,7 +6,7 @@ using XrTime             = System.Int64;
 using XrDuration         = System.Int64;
 using XrSpace            = System.UInt64;
 using XrAsyncRequestIdFB = System.UInt64;
-
+ 
 namespace StereoKitTest.Tools.SpatialEntityFBExt
 {
 	[StructLayout(LayoutKind.Sequential)]
@@ -24,20 +24,6 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 			flags = new byte[4000];
 		}
 	}
-
-	// XR_EXT_uuid
-	//[StructLayout(LayoutKind.Sequential)]
-	//struct XrUuidEXT
-	//{
-	//	// TODO not sure if this is correct
-	//	public byte[] data;
-
-	//	public XrUuidEXT()
-	//	{
-	//		data = new byte[16];
-	//	}
-	//}
-
 
 	#region XR_FB_spatial_entity
 
@@ -245,6 +231,130 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		public Guid uuid;
 		public XrSpaceStorageLocationFB location;
 	}
+
+	#endregion
+
+
+	#region XR_FB_spatial_entity_query
+
+	/// <summary>
+	/// A base structure that is not intended to be directly used, but forms a basis for specific filter 
+	/// info types.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceFilterInfoBaseHeaderFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+	}
+
+	/// <summary>
+	/// Used to query for spaces and perform a specific action on the spaces returned.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceQueryInfoFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrSpaceQueryActionFB queryAction;
+		public UInt32 maxResultCount;
+		public XrDuration timeout;
+		public IntPtr filter;        // Pointer of type XrSpaceFilterInfoBaseHeaderFB
+		public IntPtr excludeFilter; // Pointer of type XrSpaceFilterInfoBaseHeaderFB
+
+		public XrSpaceQueryInfoFB()
+		{
+			type = XrStructureType.XR_TYPE_SPACE_QUERY_INFO_FB;
+			next = IntPtr.Zero;
+			queryAction = XrSpaceQueryActionFB.XR_SPACE_QUERY_ACTION_LOAD_FB;
+			maxResultCount = 20;
+			//timeout = XrConstants.XR_INFINITE_DURATION; // leads to validation error...?!
+			timeout = 0;
+			filter = IntPtr.Zero;
+			excludeFilter = IntPtr.Zero;
+		}
+	}
+
+	/// <summary>
+	/// Extends a query filter to limit a query to a specific storage location.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceStorageLocationFilterInfoFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrSpaceStorageLocationFB location;
+
+		public XrSpaceStorageLocationFilterInfoFB()
+		{
+			type = XrStructureType.XR_TYPE_SPACE_STORAGE_LOCATION_FILTER_INFO_FB;
+			next = IntPtr.Zero;
+			location = XrSpaceStorageLocationFB.XR_SPACE_STORAGE_LOCATION_LOCAL_FB;
+		}
+	}
+
+	/// <summary>
+	/// A query result returned in the results output parameter of the xrRetrieveSpaceQueryResultsFB function.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceQueryResultFB
+	{
+		public XrSpace space;
+		public Guid uuid;
+	}
+
+	/// <summary>
+	/// Used by the xrRetrieveSpaceQueryResultsFB function to retrieve query results.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	struct XrSpaceQueryResultsFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public UInt32 resultCapacityInput;
+		public UInt32 resultCountOutput;
+		public IntPtr results; // Pointer to XrSpaceQueryResultFB[]
+
+		public XrSpaceQueryResultsFB()
+		{
+			type = XrStructureType.XR_TYPE_SPACE_QUERY_RESULTS_FB;
+			next = IntPtr.Zero;
+			resultCapacityInput = 0;
+			resultCountOutput = 0;
+			results = IntPtr.Zero;
+		}
+	}
+
+	/// <summary>
+	/// It indicates a query request has produced some number of results. If a query yields 
+	/// results this event MUST be delivered before the XrEventDataSpaceQueryCompleteFB event 
+	/// is delivered. Call xrQuerySpacesFB to retrieve those results.
+	/// </summary>
+	struct XrEventDataSpaceQueryResultsAvailableFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrAsyncRequestIdFB requestId;
+	}
+
+	/// <summary>
+	/// It indicates a query request has completed and specifies the request result. This event 
+	/// must be delivered when a query has completed, regardless of the number of results found. 
+	/// If any results have been found, then this event must be delivered after any 
+	/// XrEventDataSpaceQueryResultsAvailableFB events have been delivered.
+	/// </summary>
+	struct XrEventDataSpaceQueryCompleteFB
+	{
+		public XrStructureType type;
+		public IntPtr next;
+		public XrAsyncRequestIdFB requestId;
+		public XrResult result;
+	}
+
+	// Not Implemented:
+	//
+	// - struct XrSpaceUuidFilterInfoFB 
+	// - struct XrSpaceComponentFilterInfoFB 
 
 	#endregion
 

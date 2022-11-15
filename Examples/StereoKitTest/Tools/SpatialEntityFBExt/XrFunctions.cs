@@ -44,7 +44,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 		XrSpace space,
 		uint componentTypeCapacityInput,
 		out UInt32 componentTypeCountOutput,
-		XrSpaceComponentTypeFB[] componentTypes);           // TODO not sure if this is correct...
+		XrSpaceComponentTypeFB[] componentTypes);
 
 
 	/// <summary>
@@ -74,7 +74,7 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 	#endregion
 
 
-	#region XR_FB_spatial_entity
+	#region XR_FB_spatial_entity_storage
 
 	/// <summary>
 	/// Persists the spatial entity at the specified location with the specified mode. 
@@ -102,6 +102,34 @@ namespace StereoKitTest.Tools.SpatialEntityFBExt
 
 	#endregion
 
+
+	#region XR_FB_spatial_entity_query
+
+	/// <summary>
+	/// A function for the application to find and retrieve spatial entities from storage.
+	/// </summary>
+	/// <param name="session"></param>
+	/// <param name="info"></param>
+	/// <param name="requestId"></param>
+	/// <returns></returns>
+	delegate XrResult del_xrQuerySpacesFB(
+		XrSession session,
+		[In] XrSpaceQueryInfoFB info,
+		out XrAsyncRequestIdFB requestId);
+
+	/// <summary>
+	/// A function afor the application to retrieve all available results for a specified query. 
+	/// </summary>
+	/// <param name="session"></param>
+	/// <param name="requestId"></param>
+	/// <param name="results"></param>
+	/// <returns></returns>
+	delegate XrResult del_xrRetrieveSpaceQueryResultsFB(
+		XrSession session,
+		XrAsyncRequestIdFB requestId,
+		out XrSpaceQueryResultsFB results);
+
+	#endregion
 
 	#region Other XrFunctions
 
